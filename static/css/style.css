@@ -1,0 +1,127 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: url('/static/farm_bg.jpg.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: #1b3b1b;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.25);
+  z-index: -1;
+}
+
+nav {
+  background: rgba(39, 78, 19, 0.95);
+  color: #fff;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+nav a {
+  color: #fff;
+  text-decoration: none;
+  margin-right: 8px;
+  transition: color 0.3s;
+}
+nav a:hover {
+  color: #a7e27a;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 12px;
+}
+
+form, .card, .form-box {
+  background: rgba(255, 255, 255, 0.88);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.card {
+  border-radius: 10px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+.card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.card h3 {
+  margin: 8px 0 4px;
+  font-size: 16px;
+  color: #13350f;
+}
+.price {
+  font-weight: 700;
+  color: #1b7a2b;
+}
+
+.btn {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #1b7a2b;
+  color: #fff;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+.btn:hover {
+  background: #135c20;
+}
+
+input[type=text], 
+input[type=password], 
+input[type=number], 
+textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.footer {
+  padding: 20px;
+  text-align: center;
+  color: #f5f5f5;
+  background: rgba(27, 58, 27, 0.85);
+  border-top: 2px solid #a7e27a;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+}
+
+.small {
+  font-size: 13px;
+  color: #ddd;
+}
+

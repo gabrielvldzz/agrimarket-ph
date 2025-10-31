@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Latest Products</h2>
+<div class="grid">
+  {% for p in products %}
+    <div class="card">
+      <img src="{{ p.image_url() }}" alt="{{ p.name }}">
+      <h3>{{ p.name }}</h3>
+      <div class="small">{{ p.description[:80] }}{% if p.description|length > 80 %}...{% endif %}</div>
+      <div style="margin-top:auto; display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+        <div class="price">₱{{ '%.2f'|format(p.price) }}</div>
+        <a class="btn" href="{{ url_for('product_view', pid=p.id) }}">View</a>
+      </div>
+    </div>
+  {% else %}
+    <p>No products yet.</p>
+  {% endfor %}
+</div>
+{% endblock %}
