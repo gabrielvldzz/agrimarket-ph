@@ -35,6 +35,7 @@ class Product(db.Model):
     quantity = db.Column(db.Integer, default=0)
     image = db.Column(db.String(300))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    seller_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     def image_url(self):
         return self.image if self.image else '/static/default_product.png'
 

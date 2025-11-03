@@ -31,8 +31,15 @@ class OrderForm(FlaskForm):
     submit = SubmitField('Buy')
 
 class ProfileForm(FlaskForm):
+    display_name = StringField('Display Name', validators=[DataRequired()])
     name = StringField('Full Name', validators=[DataRequired()])
     location = StringField('Location', validators=[DataRequired()])
     background = StringField('Background Info')
     profile_pic = FileField('Profile Picture')
     submit = SubmitField('Save Profile')
+
+class ProductForm(FlaskForm):
+    name = StringField('Product Name', validators=[DataRequired()])
+    price = FloatField('Price', validators=[DataRequired()])
+    description = TextAreaField('Description')
+    submit = SubmitField('Add Product')
