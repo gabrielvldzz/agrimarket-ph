@@ -7,34 +7,46 @@
 </head>
 <body>
   <nav>
-    <div class="header-brand"><a href="{{ url_for('home') }}" style="color:#fff;">AgriMarket PH</a></div>
+    <div class="header-brand">
+      <a href="{{ url_for('home') }}" style="color:#fff;">AgriMarket PH</a>
+    </div>
     <div style="flex:1"></div>
-    <a href="{{ url_for('home') }}">Shop</a>
+
     {% if current_user.is_authenticated %}
-      {% if current_user.is_admin() %}
-        <a href="{{ url_for('admin_dashboard') }}">Admin</a>
-      {% else %}
+      {% if current_user.role == 'buyer' %}
+        <a href="{{ url_for('home') }}">Shop</a>
+        <a href="{{ url_for('view_cart') }}">Cart</a>
         <a href="{{ url_for('order_history') }}">My Orders</a>
+
+      {% elif current_user.role == 'seller' %}
+        <a href="{{ url_for('add_product') }}">Add Product</a>
+        <a href="{{ url_for('my_products') }}">My Products</a>
+        <a href="{{ url_for('seller_orders') }}">Customer Orders</a>
       {% endif %}
+
+      <a href="{{ url_for('profile') }}">Profile</a>
       <span style="margin-left:8px;">Hello, {{ current_user.username }}</span>
       <a href="{{ url_for('logout') }}">Logout</a>
+
     {% else %}
       <a href="{{ url_for('login') }}">Login</a>
       <a href="{{ url_for('register') }}">Register</a>
     {% endif %}
   </nav>
+
   <div class="container">
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         <ul>
           {% for cat, msg in messages %}
-            <li class="small">{{ msg }}</li>
+            <li class="small {{ cat }}">{{ msg }}</li>
           {% endfor %}
         </ul>
       {% endif %}
     {% endwith %}
     {% block content %}{% endblock %}
   </div>
+
   <div class="footer">AgriMarket PH — Farmer to Buyer Marketplace</div>
 </body>
 </html>

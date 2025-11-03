@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Add a New Product</h2>
+<form method="POST" enctype="multipart/form-data">
+  {{ form.hidden_tag() }}
+  <div>{{ form.name.label }} {{ form.name() }}</div>
+  <div>{{ form.description.label }} {{ form.description() }}</div>
+  <div>{{ form.price.label }} {{ form.price() }}</div>
+  <div>{{ form.quantity.label }} {{ form.quantity() }}</div>
+  <div>{{ form.image.label }} {{ form.image() }}</div>
+  {{ form.submit(class_='btn') }}
+</form>
+{% endblock %}

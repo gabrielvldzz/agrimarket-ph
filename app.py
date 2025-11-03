@@ -190,6 +190,46 @@ def create_app():
         flash('Checkout complete! Thank you for your order.', 'success')
         return redirect(url_for('home'))
     
+    @app.route('/seller/add-product', methods=['GET', 'POST'])
+    @login_required
+    def add_product():
+        if current_user.role != 'seller':
+            flash('Access denied. Only sellers can add products.', 'danger')
+            return redirect(url_for('home'))
+        
+        form = ProductForm()
+        if form.validate_on_submit():
+            filename = None
+            if form.image.data and allowed_file(form.image.data.filename):
+                filename = secure_filename(form.image.data.filename)
+                form.image.data.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            
+            new_product = Product(
+                name=form.name.data,
+                description=form.description.data,
+                price=form.price.data,
+                quantity=form.quantity.data,
+                image=f'static/uploads/{filename}' if filename else None,
+                seller_id=current_user.id
+            )
+            db.session.add(new_product)
+            db.session.commit()
+            flash('Product added successfully!', 'success')
+            return redirect(url_for('my_products'))
+
+        return render_template('add_product.html', form=form)
+
+    @app.route('/seller/my-products')
+    @login_required
+    def my_products():
+        if current_user.role != 'seller':
+            flash('Access denied.', 'danger')
+            return redirect(url_for('home'))
+
+        products = Product.query.filter_by(seller_id=current_user.id).all()
+        return render_template('my_products.html', products=products)
+
+    
     @app.route('/healthz')
     def health_check():
         return "OK", 200
