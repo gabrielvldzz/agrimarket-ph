@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>My Orders</h2>
+
+{% if orders %}
+  <ul>
+    {% for order in orders %}
+      <li>
+        {{ order.product.name }} — {{ order.quantity }} pcs — ₱{{ order.total_price }} ({{ order.status }})
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>You have no orders yet.</p>
+{% endif %}
+{% endblock %}
