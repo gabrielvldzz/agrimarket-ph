@@ -82,10 +82,10 @@ def create_app():
             user = User.query.filter_by(email=form.email.data).first()
             if user and check_password_hash(user.password, form.password.data):
                 login_user(user)
-                flash('Invalid email or password', 'danger')
+                flash('Login successful!', 'success')
                 return redirect(url_for('home'))
             else:
-                flash('Invalid credentials', 'danger')
+                flash('Invalid email or password', 'danger')
         return render_template('login.html', form=form)
 
     @app.route('/logout')
