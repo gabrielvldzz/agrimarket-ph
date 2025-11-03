@@ -1,16 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>My Products</h2>
-<a href="{{ url_for('add_product') }}">+ Add New Product</a>
+
+<a href="{{ url_for('add_product') }}">+ Add Product</a>
+
 <ul>
   {% for product in products %}
     <li>
       <strong>{{ product.name }}</strong> — ₱{{ product.price }} ({{ product.quantity }} pcs)
-      <br>
-      {{ product.description }}
+      <br>{{ product.description }}
     </li>
   {% else %}
-    <p>No products added yet.</p>
+    <p>No products yet.</p>
   {% endfor %}
 </ul>
 {% endblock %}
