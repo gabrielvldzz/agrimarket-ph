@@ -1,27 +1,18 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block content %}
 <h2>Customer Orders</h2>
-
-{% if orders %}
-  <table border="1" cellpadding="10">
-    <tr>
-      <th>Product</th>
-      <th>Quantity</th>
-      <th>Total Price</th>
-      <th>Status</th>
-      <th>Buyer</th>
-    </tr>
-    {% for order in orders %}
-    <tr>
-      <td>{{ order.product.name }}</td>
-      <td>{{ order.quantity }}</td>
-      <td>₱{{ '%.2f'|format(order.total_price) }}</td>
-      <td>{{ order.status }}</td>
-      <td>{{ order.buyer.username }}</td>
-    </tr>
-    {% endfor %}
-  </table>
-{% else %}
-  <p>No customer orders yet.</p>
-{% endif %}
+<ul>
+  {% for order in orders %}
+    <li>
+      <strong>Order #{{ order.id }}</strong> — {{ order.status }}
+      <ul>
+        {% for item in order.items %}
+          <li>{{ item.product.name }} × {{ item.quantity }}</li>
+        {% endfor %}
+      </ul>
+    </li>
+  {% else %}
+    <p>No orders received yet.</p>
+  {% endfor %}
+</ul>
 {% endblock %}

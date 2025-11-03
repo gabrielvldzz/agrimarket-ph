@@ -4,7 +4,7 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Product, Order, CartItem
-from forms import RegisterForm, LoginForm, ProfileForm
+from forms import RegisterForm, LoginForm, ProfileForm, ProductForm
 from flask_mail import Mail
 from datetime import datetime
 
