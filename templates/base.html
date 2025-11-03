@@ -9,7 +9,7 @@
   <nav>
     <div class="header-brand"><a href="{{ url_for('home') }}" style="color:#fff;">AgriMarket PH</a></div>
     <div style="flex:1"></div>
-    <a href="{{ url_for('shop') }}">Shop</a>
+    <a href="{{ url_for('home') }}">Shop</a>
     {% if current_user.is_authenticated %}
       {% if current_user.is_admin() %}
         <a href="{{ url_for('admin_dashboard') }}">Admin</a>
