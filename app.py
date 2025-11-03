@@ -193,6 +193,12 @@ def create_app():
     @app.route('/healthz')
     def health_check():
         return "OK", 200
+    
+    @app.route('/order_history')
+    @login_required
+    def order_history():
+        orders = Order.query.filter_by(buyer_id=current_user.id).all()
+        return render_template('order_history.html', orders=orders)
 
     return app
 
