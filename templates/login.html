@@ -3,8 +3,16 @@
 <h2>Login</h2>
 <form method="POST">
   {{ form.hidden_tag() }}
-  <div class="form-row">{{ form.username.label }} {{ form.username() }}</div>
+  <div class="form-row">{{ form.email.label }} {{ form.email() }}</div>
   <div class="form-row">{{ form.password.label }} {{ form.password() }}</div>
   {{ form.submit(class_='btn') }}
 </form>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="flash {{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
 {% endblock %}

@@ -14,8 +14,8 @@ def allowed_file(filename):
 def create_app():
     app = Flask(__name__)
     app.config.from_object('config.Config')
-
-    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your_secret_key_here')
+    
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev_secret_key')
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///agrimarket.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['UPLOAD_FOLDER'] = 'static/uploads'
@@ -71,7 +71,7 @@ def create_app():
     def login():
         form = LoginForm()
         if form.validate_on_submit():
-            user = User.query.filter_by(username=form.username.data).first()
+            user = User.query.filter_by(email=form.email.data).first()
             if user and check_password_hash(user.password, form.password.data):
                 login_user(user)
                 flash('Login successful!', 'success')
