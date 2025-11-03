@@ -48,17 +48,15 @@ def create_app():
     @app.route('/register', methods=['GET', 'POST'])
     def register():
         form = RegisterForm()
+        
         if form.validate_on_submit():
             print("✅ Form validated successfully")
             
-        else:
-            print("❌ Validation failed", form.errors)
-
             existing_user = User.query.filter_by(email=form.email.data).first()
             if existing_user:
                 flash('Email already exists', 'danger')
                 return redirect(url_for('register'))
-
+            
             hashed_pw = generate_password_hash(form.password.data)
             new_user = User(
                 username=form.username.data,
@@ -66,10 +64,15 @@ def create_app():
                 password=hashed_pw,
                 role=form.role.data
             )
+            
             db.session.add(new_user)
             db.session.commit()
             flash('Account created successfully! You can now log in.', 'success')
             return redirect(url_for('login'))
+        
+        else:
+            print("❌ Validation failed", form.errors)
+        
         return render_template('register.html', form=form)
 
     @app.route('/login', methods=['GET', 'POST'])
@@ -79,7 +82,7 @@ def create_app():
             user = User.query.filter_by(email=form.email.data).first()
             if user and check_password_hash(user.password, form.password.data):
                 login_user(user)
-                flash('Login successful!', 'success')
+                flash('Invalid email or password', 'danger')
                 return redirect(url_for('home'))
             else:
                 flash('Invalid credentials', 'danger')
