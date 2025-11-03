@@ -49,6 +49,11 @@ def create_app():
     def register():
         form = RegisterForm()
         if form.validate_on_submit():
+            print("✅ Form validated successfully")
+            
+        else:
+            print("❌ Validation failed", form.errors)
+
             existing_user = User.query.filter_by(email=form.email.data).first()
             if existing_user:
                 flash('Email already exists', 'danger')
