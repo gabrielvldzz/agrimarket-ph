@@ -228,17 +228,35 @@ def create_app():
 
         products = Product.query.filter_by(seller_id=current_user.id).all()
         return render_template('my_products.html', products=products)
+    
+    @app.route('/orders')
+    @login_required
+    def order_history():
+        if current_user.role != 'buyer':
+            flash('Access denied: only buyers can view order history.', 'danger')
+            return redirect(url_for('home'))
+        
+        orders = Order.query.filter_by(buyer_id=current_user.id).all()
+        return render_template('buyer_orders.html', orders=orders)
 
     
+    @app.route('/seller/orders')
+    @login_required
+    def seller_orders():
+        if current_user.role != 'seller':
+            flash('Access denied: only sellers can view customer orders.', 'danger')
+            return redirect(url_for('home'))
+    
+        orders = (
+            Order.query.join(Product)
+            .filter(Product.seller_id == current_user.id)
+            .all()
+        )
+        return render_template('seller_orders.html', orders=orders)
+
     @app.route('/healthz')
     def health_check():
         return "OK", 200
-    
-    @app.route('/order_history')
-    @login_required
-    def order_history():
-        orders = Order.query.filter_by(buyer_id=current_user.id).all()
-        return render_template('order_history.html', orders=orders)
 
     return app
 
