@@ -4,8 +4,6 @@ from wtforms import (
     IntegerField, TextAreaField, DecimalField, FileField, SelectField)
 from wtforms.validators import DataRequired, Length, Email, NumberRange, EqualTo
 
-print("✅ ProductForm reloaded with quantity field!")
-
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
@@ -20,6 +18,7 @@ class RegisterForm(FlaskForm):
     submit = SubmitField('Register')
 
 class ProductForm(FlaskForm):
+    print("🧩 Initializing ProductForm with quantity...")
     name = StringField('Product Name', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired()])
     price = DecimalField('Price', validators=[DataRequired(), NumberRange(min=0)])
