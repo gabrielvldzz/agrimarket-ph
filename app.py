@@ -11,7 +11,9 @@ from flask_mail import Mail
 from datetime import datetime
 
 import forms
-print("🧩 Loaded forms.py from:", forms.__file__)
+from importlib import reload
+reload(forms)
+print("🔁 Reloaded ProductForm definition:", hasattr(forms.ProductForm, "quantity"))
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
@@ -217,7 +219,8 @@ def create_app():
 
         db.session.commit()
         flash('Checkout complete! Thank you for your order.', 'success')
-        return redirect(url_for('order_history'))
+        return render_template('checkout_success.html')
+
 
     @app.route('/seller/add-product', methods=['GET', 'POST'])
     @login_required
