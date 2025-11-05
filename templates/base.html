@@ -24,6 +24,8 @@
         <a href="{{ url_for('seller_orders') }}">Customer Orders</a>
       {% endif %}
 
+      <a href="{{ url_for('features') }}" style="margin-left: 15px; color: white; text-decoration: none;">Features</a>
+
       <a href="{{ url_for('profile') }}">Profile</a>
       <span style="margin-left:8px;">Hello, {{ current_user.username }}</span>
       <a href="{{ url_for('logout') }}">Logout</a>
@@ -47,6 +49,8 @@
     {% block content %}{% endblock %}
   </div>
 
-  <div class="footer">AgriMarket PH — Farmer to Buyer Marketplace</div>
+  <div class="footer" style="background-color:#1a4d2e; color:white; text-align:center; padding:10px 0; margin-top:50px;">
+    <p style="margin:0;">AgriMarket PH — Farmer to Buyer Marketplace</p>
+  </div>
 </body>
 </html>

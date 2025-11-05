@@ -125,3 +125,10 @@ textarea {
   color: #ddd;
 }
 
+.footer {
+  margin-top: auto;
+  background-color: #1a4d2e;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+}

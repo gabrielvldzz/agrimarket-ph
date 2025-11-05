@@ -12,6 +12,7 @@ from datetime import datetime
 
 import forms
 from importlib import reload
+
 reload(forms)
 print("🔁 Reloaded ProductForm definition:", hasattr(forms.ProductForm, "quantity"))
 
@@ -284,6 +285,10 @@ def create_app():
             .all()
         )
         return render_template('seller_orders.html', orders=orders)
+    
+    @app.route('/features')
+    def features():
+        return render_template('features.html')
 
     @app.route('/healthz')
     def health_check():
