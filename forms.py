@@ -27,6 +27,8 @@ class ProductForm(FlaskForm):
     image = FileField('Product Image', validators=[FileAllowed(['jpg', 'png', 'jpeg'])])
     submit = SubmitField('Add Product')
 
+print("✅ ProductForm reloaded with quantity field!")
+
 class OrderForm(FlaskForm):
     quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1)])
     submit = SubmitField('Buy')
