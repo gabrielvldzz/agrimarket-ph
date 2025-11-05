@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Profile</h2>
+
+<form method="POST" enctype="multipart/form-data" class="form-box">
+  {{ form.hidden_tag() }}
+  <div class="form-row">{{ form.name.label }} {{ form.name() }}</div>
+  <div class="form-row">{{ form.location.label }} {{ form.location() }}</div>
+  <div class="form-row">{{ form.background.label }} {{ form.background() }}</div>
+  <div class="form-row">{{ form.profile_pic.label }} {{ form.profile_pic() }}</div>
+  {{ form.submit(class_='btn') }}
+</form>
+
+<hr>
+<div>
+  <h3>Preview</h3>
+  <img src="{{ user.profile_image or url_for('static', filename='default_profile.png') }}" alt="profile" style="width:120px;">
+  <p><strong>{{ user.username }}</strong></p>
+  <p>{{ user.location }}</p>
+</div>
+{% endblock %}
