@@ -1,6 +1,8 @@
 import os
 from flask import Flask, render_template, redirect, url_for, flash, request
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from flask_login import (
+    LoginManager, login_user, logout_user, login_required, current_user
+)
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Product, Order, CartItem
@@ -8,28 +10,35 @@ from forms import RegisterForm, LoginForm, ProfileForm, ProductForm
 from flask_mail import Mail
 from datetime import datetime
 
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
+
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object('config.Config')
-    
+
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev_secret_key')
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///agrimarket.db')
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+        'DATABASE_URL', 'sqlite:///agrimarket.db'
+    )
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['UPLOAD_FOLDER'] = 'static/uploads'
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-  
+
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
     app.config['MAIL_PORT'] = 587
     app.config['MAIL_USE_TLS'] = True
     app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
     app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
-    app.config['MAIL_DEFAULT_SENDER'] = ('AgriMarket PH', os.environ.get('MAIL_USERNAME'))
+    app.config['MAIL_DEFAULT_SENDER'] = (
+        'AgriMarket PH', os.environ.get('MAIL_USERNAME')
+    )
 
     db.init_app(app)
     mail = Mail(app)
+
     login_manager = LoginManager(app)
     login_manager.login_view = 'login'
 
@@ -48,15 +57,12 @@ def create_app():
     @app.route('/register', methods=['GET', 'POST'])
     def register():
         form = RegisterForm()
-        
         if form.validate_on_submit():
-            print("✅ Form validated successfully")
-            
             existing_user = User.query.filter_by(email=form.email.data).first()
             if existing_user:
                 flash('Email already exists', 'danger')
                 return redirect(url_for('register'))
-            
+
             hashed_pw = generate_password_hash(form.password.data)
             new_user = User(
                 username=form.username.data,
@@ -64,15 +70,12 @@ def create_app():
                 password=hashed_pw,
                 role=form.role.data
             )
-            
+
             db.session.add(new_user)
             db.session.commit()
             flash('Account created successfully! You can now log in.', 'success')
             return redirect(url_for('login'))
-        
-        else:
-            print("❌ Validation failed", form.errors)
-        
+
         return render_template('register.html', form=form)
 
     @app.route('/login', methods=['GET', 'POST'])
@@ -131,6 +134,10 @@ def create_app():
     @app.route('/cart')
     @login_required
     def view_cart():
+        if current_user.role != 'buyer':
+            flash('Only buyers can access the cart.', 'danger')
+            return redirect(url_for('home'))
+
         items = CartItem.query.filter_by(user_id=current_user.id).all()
         total = sum((item.product.price or 0) * item.quantity for item in items)
         return render_template('cart.html', items=items, total=total)
@@ -138,12 +145,24 @@ def create_app():
     @app.route('/cart/add/<int:product_id>', methods=['POST'])
     @login_required
     def add_to_cart(product_id):
+        if current_user.role != 'buyer':
+            flash('Only buyers can add items to cart.', 'danger')
+            return redirect(url_for('home'))
+
         product = Product.query.get_or_404(product_id)
-        existing = CartItem.query.filter_by(user_id=current_user.id, product_id=product.id).first()
+        if product.seller_id == current_user.id:
+            flash("You can't buy your own product.", 'warning')
+            return redirect(url_for('home'))
+
+        existing = CartItem.query.filter_by(
+            user_id=current_user.id, product_id=product.id
+        ).first()
         if existing:
             existing.quantity += 1
         else:
-            db.session.add(CartItem(user_id=current_user.id, product_id=product.id, quantity=1))
+            db.session.add(
+                CartItem(user_id=current_user.id, product_id=product.id, quantity=1)
+            )
         db.session.commit()
         flash(f'{product.name} added to cart!', 'success')
         return redirect(request.referrer or url_for('home'))
@@ -151,9 +170,13 @@ def create_app():
     @app.route('/cart/remove/<int:item_id>', methods=['POST'])
     @login_required
     def remove_from_cart(item_id):
+        if current_user.role != 'buyer':
+            flash('Only buyers can remove items from cart.', 'danger')
+            return redirect(url_for('home'))
+
         item = CartItem.query.get_or_404(item_id)
         if item.user_id != current_user.id:
-            flash('You cannot delete this item.', 'danger')
+            flash('Unauthorized action.', 'danger')
             return redirect(url_for('view_cart'))
         db.session.delete(item)
         db.session.commit()
@@ -163,6 +186,10 @@ def create_app():
     @app.route('/cart/checkout', methods=['POST'])
     @login_required
     def checkout():
+        if current_user.role != 'buyer':
+            flash('Only buyers can checkout.', 'danger')
+            return redirect(url_for('home'))
+
         items = CartItem.query.filter_by(user_id=current_user.id).all()
         if not items:
             flash('Your cart is empty.', 'warning')
@@ -188,22 +215,22 @@ def create_app():
 
         db.session.commit()
         flash('Checkout complete! Thank you for your order.', 'success')
-        return redirect(url_for('home'))
-    
+        return redirect(url_for('order_history'))
+
     @app.route('/seller/add-product', methods=['GET', 'POST'])
     @login_required
     def add_product():
         if current_user.role != 'seller':
             flash('Access denied. Only sellers can add products.', 'danger')
             return redirect(url_for('home'))
-        
+
         form = ProductForm()
         if form.validate_on_submit():
             filename = None
             if form.image.data and allowed_file(form.image.data.filename):
                 filename = secure_filename(form.image.data.filename)
                 form.image.data.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            
+
             new_product = Product(
                 name=form.name.data,
                 description=form.description.data,
@@ -228,25 +255,24 @@ def create_app():
 
         products = Product.query.filter_by(seller_id=current_user.id).all()
         return render_template('my_products.html', products=products)
-    
+
     @app.route('/orders')
     @login_required
     def order_history():
         if current_user.role != 'buyer':
             flash('Access denied: only buyers can view order history.', 'danger')
             return redirect(url_for('home'))
-        
+
         orders = Order.query.filter_by(buyer_id=current_user.id).all()
         return render_template('buyer_orders.html', orders=orders)
 
-    
     @app.route('/seller/orders')
     @login_required
     def seller_orders():
         if current_user.role != 'seller':
             flash('Access denied: only sellers can view customer orders.', 'danger')
             return redirect(url_for('home'))
-    
+
         orders = (
             Order.query.join(Product)
             .filter(Product.seller_id == current_user.id)
