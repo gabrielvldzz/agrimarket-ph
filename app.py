@@ -7,7 +7,6 @@ from models import db, User, Product, Order, CartItem
 from forms import RegisterForm, LoginForm, ProfileForm, ProductForm
 from flask_mail import Mail
 from datetime import datetime
-print("✅ ProductForm reloaded with quantity field!")
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
