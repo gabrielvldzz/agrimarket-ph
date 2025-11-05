@@ -10,6 +10,7 @@ from forms import RegisterForm, LoginForm, ProfileForm, ProductForm
 from flask_mail import Mail
 from datetime import datetime
 
+import forms
 print("🧩 Loaded forms.py from:", forms.__file__)
 
 def allowed_file(filename):
