@@ -1,2 +1,2 @@
 # agrimarket-ph
-AgriMarket PH — Farmer to Buyer Marketplace (Flask Web App)
+AgriMarket PH — Farmer to Buyer Marketplace (Flask Website)
