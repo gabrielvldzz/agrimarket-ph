@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}My Cart{% endblock %}
+
+{% block content %}
+<div class="cart-container">
+    <h2>🛒 My Shopping Cart</h2>
+
+    {% if items|length == 0 %}
+        <p>Your cart is empty. <a href="{{ url_for('home') }}">Continue shopping</a>.</p>
+    {% else %}
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>₱{{ "%.2f"|format(item.product.price) }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₱{{ "%.2f"|format(item.product.price * item.quantity) }}</td>
+                    <td>
+                        <form action="{{ url_for('remove_from_cart', item_id=item.id) }}" method="POST">
+                            <button type="submit" class="btn btn-danger">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="cart-summary">
+            <h4>Total: ₱{{ "%.2f"|format(total) }}</h4>
+            <form action="{{ url_for('checkout') }}" method="POST">
+                <button type="submit" class="btn btn-success">Checkout</button>
+            </form>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.cart-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+.cart-table th, .cart-table td {
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+.cart-summary {
+    text-align: right;
+    margin-top: 1rem;
+}
+.btn {
+    padding: 5px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+</style>
+{% endblock %}

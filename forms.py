@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField, PasswordField, SubmitField, FloatField,
-    IntegerField, TextAreaField, DecimalField, FileField, SelectField
+    IntegerField, TextAreaField, FileField, SelectField
 )
 from wtforms.validators import DataRequired, Length, Email, NumberRange, EqualTo
 
@@ -19,14 +19,12 @@ class RegisterForm(FlaskForm):
     submit = SubmitField('Register')
 
 class ProductForm(FlaskForm):
-    name = StringField('Product Name', validators=[DataRequired()])
+    name = StringField('Product Name', validators=[DataRequired(), Length(max=100)])
     description = TextAreaField('Description', validators=[DataRequired()])
-    price = DecimalField('Price', validators=[DataRequired(), NumberRange(min=0)])
+    price = FloatField('Price', validators=[DataRequired(), NumberRange(min=0)])
     quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1)])
     image = FileField('Product Image')
     submit = SubmitField('Add Product')
-
-print("✅ ProductForm reloaded with quantity field!")
 
 class OrderForm(FlaskForm):
     quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1)])
