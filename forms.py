@@ -24,7 +24,7 @@ class ProductForm(FlaskForm):
     price = FloatField('Price', validators=[DataRequired(), NumberRange(min=0)])
     quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=0)])
     image = FileField('Product Image')
-    submit = SubmitField('Save')
+    submit = SubmitField('Add Product')
 
 class OrderForm(FlaskForm):
     quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1)])
