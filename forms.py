@@ -1,8 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField, PasswordField, SubmitField, FloatField,
-    IntegerField, TextAreaField, FileField, SelectField
-)
+    IntegerField, TextAreaField, DecimalField, FileField, SelectField)
 from wtforms.validators import DataRequired, Length, Email, NumberRange, EqualTo
 
 class LoginForm(FlaskForm):
@@ -20,9 +19,9 @@ class RegisterForm(FlaskForm):
 
 class ProductForm(FlaskForm):
     name = StringField('Product Name', validators=[DataRequired()])
-    description = TextAreaField('Description')
-    price = FloatField('Price', validators=[DataRequired(), NumberRange(min=0)])
-    quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=0)])
+    description = TextAreaField('Description', validators=[DataRequired()])
+    price = DecimalField('Price', validators=[DataRequired(), NumberRange(min=0)])
+    quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1)])
     image = FileField('Product Image')
     submit = SubmitField('Add Product')
 
