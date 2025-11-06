@@ -53,11 +53,24 @@ def create_app():
 
     with app.app_context():
         db.create_all()
-
+        
     @app.route('/')
     def home():
-        products = Product.query.all()
-        return render_template('index.html', products=products)
+        query = request.args.get('q', '')
+        price_min = request.args.get('min', 0, type=float)
+        price_max = request.args.get('max', 999999, type=float)
+        
+        products = Product.query
+        if query:
+            products = products.filter(Product.name.ilike(f'%{query}%'))
+        if price_min:
+            products = products.filter(Product.price >= price_min)
+        if price_max:
+            products = products.filter(Product.price <= price_max)
+        
+        products = products.all()
+        return render_template('index.html', products=products, query=query)
+
 
     @app.route('/register', methods=['GET', 'POST'])
     def register():
@@ -135,6 +148,22 @@ def create_app():
         form.display_name.data = current_user.username
         form.location.data = current_user.location
         return render_template('profile.html', form=form, user=current_user)
+    
+    @app.route('/messages/<int:user_id>', methods=['GET', 'POST'])
+    @login_required
+    def messages(user_id):
+        other_user = User.query.get_or_404(user_id)
+        if request.method == 'POST':
+            content = request.form.get('content')
+            if content.strip():
+                msg = Message(sender_id=current_user.id, receiver_id=other_user.id, content=content)
+                db.session.add(msg)
+                db.session.commit()
+        messages = Message.query.filter(
+            ((Message.sender_id == current_user.id) & (Message.receiver_id == other_user.id)) |
+            ((Message.sender_id == other_user.id) & (Message.receiver_id == current_user.id))
+        ).order_by(Message.timestamp).all()
+        return render_template('messages.html', messages=messages, other_user=other_user)
 
     @app.route('/cart')
     @login_required
@@ -266,11 +295,12 @@ def create_app():
     @login_required
     def order_history():
         if current_user.role != 'buyer':
-            flash('Access denied: only buyers can view order history.', 'danger')
+            flash('Access denied.', 'danger')
             return redirect(url_for('home'))
 
         orders = Order.query.filter_by(buyer_id=current_user.id).all()
-        return render_template('buyer_orders.html', orders=orders)
+        return render_template('order_history.html', orders=orders)
+
 
     @app.route('/seller/orders')
     @login_required

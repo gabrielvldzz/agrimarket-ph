@@ -1,14 +1,28 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Order History</h2>
+<h2>🧾 My Transaction History</h2>
+<table class="order-table">
+  <tr>
+    <th>Product</th>
+    <th>Quantity</th>
+    <th>Total Price</th>
+    <th>Status</th>
+    <th>Date</th>
+  </tr>
+  {% for o in orders %}
+  <tr>
+    <td>{{ o.product.name }}</td>
+    <td>{{ o.quantity }}</td>
+    <td>₱{{ "%.2f"|format(o.total_price) }}</td>
+    <td>{{ o.status }}</td>
+    <td>{{ o.date_ordered.strftime('%Y-%m-%d') if o.date_ordered else '—' }}</td>
+  </tr>
+  {% endfor %}
+</table>
 
-{% if orders %}
-  <ul>
-    {% for o in orders %}
-      <li>{{ o.product.name if o.product else 'Deleted product' }} — {{ o.quantity }} — ₱{{ '%.2f'|format(o.total_price) }} — {{ o.status }}</li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>No history yet.</p>
-{% endif %}
+<style>
+  .order-table { width: 80%; margin: 20px auto; border-collapse: collapse; }
+  .order-table th, .order-table td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+  .order-table th { background-color: #2e8b57; color: white; }
+</style>
 {% endblock %}

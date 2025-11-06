@@ -64,6 +64,8 @@ form, .card, .form-box {
 .card {
   border-radius: 10px;
   transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
 }
 .card:hover {
   transform: translateY(-4px);
@@ -83,6 +85,13 @@ form, .card, .form-box {
 .price {
   font-weight: 700;
   color: #1b7a2b;
+}
+
+.card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
 }
 
 .btn {
@@ -109,26 +118,72 @@ textarea {
   margin-bottom: 10px;
 }
 
+.search-section {
+  text-align: center;
+  margin: 30px auto;
+  background: rgba(245, 255, 245, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 700px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.search-section h2 {
+  color: #2e8b57;
+  font-weight: 700;
+}
+.search-section p {
+  font-size: 0.95rem;
+  color: #333;
+}
+.search-bar {
+  margin-top: 15px;
+}
+.search-bar input {
+  padding: 8px 10px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 150px;
+}
+.search-bar button {
+  background-color: #2e8b57;
+  color: #fff;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.search-bar button:hover {
+  background-color: #256b44;
+}
+
+.info-box {
+  background: rgba(230, 255, 230, 0.9);
+  border: 1px solid #b9deb9;
+  border-radius: 10px;
+  padding: 15px;
+  margin: 30px auto;
+  max-width: 700px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
 .footer {
   padding: 20px;
   text-align: center;
   color: #f5f5f5;
-  background: rgba(27, 58, 27, 0.85);
+  background: rgba(27, 58, 27, 0.9);
   border-top: 2px solid #a7e27a;
   position: relative;
   bottom: 0;
   width: 100%;
+  font-size: 14px;
+}
+.footer p {
+  margin: 5px 0;
 }
 
 .small {
   font-size: 13px;
   color: #ddd;
-}
-
-.footer {
-  margin-top: auto;
-  background-color: #1a4d2e;
-  color: white;
-  text-align: center;
-  padding: 10px 0;
 }
