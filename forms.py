@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import (
-    StringField, PasswordField, SubmitField, FloatField,
-    IntegerField, DecimalField, TextAreaField, FileField, SelectField
+    StringField, PasswordField, SubmitField, IntegerField,
+    TextAreaField, DecimalField, FileField, SelectField
 )
 from wtforms.validators import DataRequired, Length, Email, NumberRange, EqualTo
 from flask_wtf.file import FileAllowed
@@ -22,12 +22,10 @@ class RegisterForm(FlaskForm):
 class ProductForm(FlaskForm):
     name = StringField('Product Name', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired()])
-    price = DecimalField('Price', validators=[DataRequired()])
-    quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1)])
-    image = FileField('Product Image', validators=[FileAllowed(['jpg', 'png', 'jpeg'])])
+    price = DecimalField('Price', validators=[DataRequired(), NumberRange(min=0)])
+    quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=0)])
+    image = FileField('Product Image', validators=[FileAllowed(['jpg', 'png', 'jpeg', 'gif'], 'Images only!')])
     submit = SubmitField('Add Product')
-
-print("✅ ProductForm reloaded with quantity field!")
 
 class OrderForm(FlaskForm):
     quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1)])
@@ -35,14 +33,7 @@ class OrderForm(FlaskForm):
 
 class ProfileForm(FlaskForm):
     display_name = StringField('Display Name', validators=[DataRequired()])
-    name = StringField('Full Name', validators=[DataRequired()])
     location = StringField('Location', validators=[DataRequired()])
     background = StringField('Background Info')
-    profile_pic = FileField('Profile Picture')
+    profile_pic = FileField('Profile Picture', validators=[FileAllowed(['jpg', 'png', 'jpeg', 'gif'], 'Images only!')])
     submit = SubmitField('Save Profile')
-
-class ProductForm(FlaskForm):
-    name = StringField('Product Name', validators=[DataRequired()])
-    price = FloatField('Price', validators=[DataRequired()])
-    description = TextAreaField('Description')
-    submit = SubmitField('Add Product')
