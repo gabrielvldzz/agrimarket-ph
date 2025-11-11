@@ -1,28 +1,56 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>🧾 My Transaction History</h2>
-<table class="order-table">
-  <tr>
-    <th>Product</th>
-    <th>Quantity</th>
-    <th>Total Price</th>
-    <th>Status</th>
-    <th>Date</th>
-  </tr>
-  {% for o in orders %}
-  <tr>
-    <td>{{ o.product.name }}</td>
-    <td>{{ o.quantity }}</td>
-    <td>₱{{ "%.2f"|format(o.total_price) }}</td>
-    <td>{{ o.status }}</td>
-    <td>{{ o.date_ordered.strftime('%Y-%m-%d') if o.date_ordered else '—' }}</td>
-  </tr>
-  {% endfor %}
-</table>
+
+<div class="orders-container">
+  <h2>🧾 My Orders</h2>
+
+  {% if orders %}
+    {% for o in orders %}
+      <div class="order-card">
+        <div class="order-header">
+          <strong>{{ o.product.name }}</strong>
+          <span class="status">{{ o.status }}</span>
+        </div>
+        <p>Quantity: {{ o.quantity }}</p>
+        <p>Total: ₱{{ "%.2f"|format(o.total_price) }}</p>
+        <small>Ordered on: {{ o.created_at.strftime("%b %d, %Y") }}</small>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>You haven’t placed any orders yet.</p>
+  {% endif %}
+</div>
 
 <style>
-  .order-table { width: 80%; margin: 20px auto; border-collapse: collapse; }
-  .order-table th, .order-table td { border: 1px solid #ccc; padding: 10px; text-align: center; }
-  .order-table th { background-color: #2e8b57; color: white; }
+.orders-container {
+  max-width: 800px;
+  margin: 40px auto;
+  background: #f9fff5;
+  border-radius: 15px;
+  padding: 20px;
+}
+
+.order-card {
+  background: #fff;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status {
+  background: #c8e6c9;
+  padding: 5px 10px;
+  border-radius: 10px;
+  font-weight: bold;
+  color: #2e7d32;
+}
 </style>
+
 {% endblock %}
