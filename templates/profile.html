@@ -4,10 +4,10 @@
 
 <form method="POST" enctype="multipart/form-data" class="form-box">
   {{ form.hidden_tag() }}
-  <div class="form-row">{{ form.name.label }} {{ form.name() }}</div>
+<div class="form-row">{{ form.display_name.label }} {{ form.display_name() }}</div>
   <div class="form-row">{{ form.location.label }} {{ form.location() }}</div>
-  <div class="form-row">{{ form.background.label }} {{ form.background() }}</div>
-  <div class="form-row">{{ form.profile_pic.label }} {{ form.profile_pic() }}</div>
+  <div class="form-row">{{ form.profile_image.label }} {{ form.profile_image() }}</div>
+  <div class="form-row">{{ form.background_image.label }} {{ form.background_image() }}</div>
   {{ form.submit(class_='btn') }}
 </form>
 
