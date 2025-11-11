@@ -105,7 +105,6 @@
         <a href="{{ url_for('seller_orders') }}">Customer Orders</a>
       {% endif %}
 
-      <a href="{{ url_for('features') }}">Features</a>
       <a href="{{ url_for('profile') }}">Profile</a>
       {% if current_user.profile_pic %}
         <img src="{{ url_for('static', filename='uploads/' ~ current_user.profile_pic) }}" alt="Profile Pic" style="width:30px;height:30px;border-radius:50%;margin-left:8px;">
