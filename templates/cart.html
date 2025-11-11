@@ -23,8 +23,17 @@
                 <tr>
                     <td>{{ item.product.name }}</td>
                     <td>₱{{ "%.2f"|format(item.product.price) }}</td>
-                    <td>{{ item.quantity }}</td>
+
+                    <td>
+                        <form method="POST" action="{{ url_for('update_cart_quantity', item_id=item.id) }}" class="qty-form">
+                            <button type="submit" name="action" value="decrease" class="qty-btn">−</button>
+                            <span class="qty-num">{{ item.quantity }}</span>
+                            <button type="submit" name="action" value="increase" class="qty-btn">+</button>
+                        </form>
+                    </td>
+
                     <td>₱{{ "%.2f"|format(item.product.price * item.quantity) }}</td>
+
                     <td>
                         <form action="{{ url_for('remove_from_cart', item_id=item.id) }}" method="POST">
                             <button type="submit" class="btn btn-danger">Remove</button>
@@ -46,7 +55,7 @@
 
 <style>
 .cart-container {
-    max-width: 800px;
+    max-width: 850px;
     margin: 2rem auto;
     background: #fff;
     padding: 20px;
@@ -62,6 +71,7 @@
     border-bottom: 1px solid #ddd;
     padding: 10px;
     text-align: center;
+    vertical-align: middle;
 }
 .cart-summary {
     text-align: right;
@@ -72,6 +82,7 @@
     border: none;
     border-radius: 8px;
     cursor: pointer;
+    transition: all 0.2s ease;
 }
 .btn-danger {
     background-color: #dc3545;
@@ -80,6 +91,31 @@
 .btn-success {
     background-color: #28a745;
     color: white;
+}
+.btn:hover {
+    opacity: 0.9;
+}
+.qty-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.qty-btn {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+.qty-btn:hover {
+    background-color: #ddd;
+}
+.qty-num {
+    margin: 0 10px;
+    min-width: 20px;
+    display: inline-block;
 }
 </style>
 {% endblock %}

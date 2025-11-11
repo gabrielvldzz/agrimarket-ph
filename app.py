@@ -120,12 +120,16 @@ def create_app():
     @login_required
     def profile():
         form = ProfileForm()
+
+        show_address = current_user.role == 'buyer'
+
         if form.validate_on_submit():
             if form.display_name.data:
-                current_user.username = form.username.data
-                current_user.email = form.email.data
-                current_user.address = form.address.data
-                current_user.location = form.location.data
+                current_user.username = form.display_name.data
+            current_user.location = form.location.data
+
+            if show_address:
+                current_user.delivery_address = form.delivery_address.data
 
             if 'profile_image' in request.files:
                 f = request.files['profile_image']
@@ -144,12 +148,15 @@ def create_app():
                     current_user.background_image = f'/static/uploads/{filename}'
 
             db.session.commit()
-            flash('Profile updated!', 'success')
+            flash('Profile updated successfully!', 'success')
             return redirect(url_for('profile'))
 
         form.display_name.data = current_user.username
         form.location.data = current_user.location
-        return render_template('profile.html', form=form, user=current_user)
+        if show_address:
+            form.delivery_address.data = current_user.delivery_address
+
+        return render_template('profile.html', form=form, user=current_user, show_address=show_address)
     
     @app.route('/messages/<int:user_id>', methods=['GET', 'POST'])
     @login_required
@@ -191,17 +198,25 @@ def create_app():
             flash("You can't buy your own product.", 'warning')
             return redirect(url_for('home'))
 
+        quantity = int(request.form.get('quantity', 1))
+
+        if quantity <= 0:
+            flash("Invalid quantity selected.", "warning")
+            return redirect(request.referrer or url_for('home'))
+
         existing = CartItem.query.filter_by(
             user_id=current_user.id, product_id=product.id
         ).first()
+
         if existing:
-            existing.quantity += 1
+            existing.quantity += quantity
         else:
             db.session.add(
-                CartItem(user_id=current_user.id, product_id=product.id, quantity=1)
+                CartItem(user_id=current_user.id, product_id=product.id, quantity=quantity)
             )
+
         db.session.commit()
-        flash(f'{product.name} added to cart!', 'success')
+        flash(f'{quantity} × {product.name} added to cart!', 'success')
         return redirect(request.referrer or url_for('home'))
 
     @app.route('/cart/remove/<int:item_id>', methods=['POST'])
@@ -218,6 +233,24 @@ def create_app():
         db.session.delete(item)
         db.session.commit()
         flash('Item removed from cart.', 'info')
+        return redirect(url_for('view_cart'))
+    
+    @app.route('/cart/update/<int:item_id>', methods=['POST'])
+    @login_required
+    def update_cart_quantity(item_id):
+        item = CartItem.query.get_or_404(item_id)
+
+        if item.user_id != current_user.id:
+            flash('Unauthorized.', 'danger')
+            return redirect(url_for('view_cart'))
+
+        action = request.form.get('action')
+        if action == 'increase':
+            item.quantity += 1
+        elif action == 'decrease' and item.quantity > 1:
+            item.quantity -= 1
+
+        db.session.commit()
         return redirect(url_for('view_cart'))
 
     @app.route('/cart/checkout', methods=['POST'])

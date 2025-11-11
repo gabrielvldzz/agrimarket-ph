@@ -3,14 +3,29 @@
 <div class="profile-box">
   <h2>My Profile</h2>
   <img src="{{ user.profile_image }}" alt="Profile" class="profile-pic">
+
   <form method="POST" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
-    <label>{{ form.display_name.label }}</label> {{ form.display_name() }}
-    <label>{{ form.location.label }}</label> {{ form.location() }}
-    <label>{{ form.delivery_address.label }}</label> {{ form.delivery_address() }}
-    <label>{{ form.profile_image.label }}</label> {{ form.profile_image() }}
-    <label>{{ form.background_image.label }}</label> {{ form.background_image() }}
-    {{ form.submit(class_='btn') }}
+
+    <label>{{ form.display_name.label }}</label>
+    {{ form.display_name(class_='form-control') }}
+
+    <label>{{ form.location.label }}</label>
+    {{ form.location(class_='form-control') }}
+
+    {% if show_address %}
+      <label>{{ form.delivery_address.label }}</label>
+      {{ form.delivery_address(class_='form-control') }}
+    {% endif %}
+
+    <label>{{ form.profile_image.label }}</label>
+    {{ form.profile_image(class_='form-control') }}
+
+    <label>{{ form.background_image.label }}</label>
+    {{ form.background_image(class_='form-control') }}
+
+    <br>
+    {{ form.submit(class_='btn btn-success') }}
   </form>
 </div>
 {% endblock %}
