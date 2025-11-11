@@ -2,24 +2,20 @@
 {% block content %}
 <h2>My Products</h2>
 
-{% if products %}
-  <div class="grid">
-    {% for p in products %}
-      <div class="card">
-        <img src="{{ p.image or url_for('static', filename='default_product.png') }}" alt="{{ p.name }}">
-        <h3>{{ p.name }}</h3>
-        <div class="small">{{ p.description[:100] }}{% if p.description|length > 100 %}...{% endif %}</div>
-        <div class="price">₱{{ '%.2f'|format(p.price) }}</div>
-        <div style="margin-top:8px;">
-          <a class="btn" href="{{ url_for('product_view', pid=p.id) }}">View</a>
-          <form method="POST" action="{{ url_for('delete_product', pid=p.id) }}" style="display:inline;">
-            <button class="btn" type="submit">Delete</button>
-          </form>
-        </div>
-      </div>
-    {% endfor %}
-  </div>
-{% else %}
-  <p>You have no products yet. <a href="{{ url_for('add_product') }}">Add one</a>.</p>
-{% endif %}
+<div class="grid">
+  {% for p in products %}
+    <div class="card">
+      <img src="{{ p.image_url() }}" alt="{{ p.name }}">
+      <h3>{{ p.name }}</h3>
+      <p>₱{{ '%.2f'|format(p.price) }}</p>
+      <p>Stock: {{ p.quantity }}</p>
+
+      <form method="POST" action="{{ url_for('delete_product', pid=p.id) }}" style="display:inline;">
+        <button class="btn" type="submit">Delete</button>
+      </form>
+    </div>
+  {% else %}
+    <p>No products added yet.</p>
+  {% endfor %}
+</div>
 {% endblock %}

@@ -292,6 +292,23 @@ def create_app():
         products = Product.query.filter_by(seller_id=current_user.id).all()
         return render_template('my_products.html', products=products)
     
+    @app.route('/seller/delete-product/<int:pid>', methods=['POST'])
+    @login_required
+    def delete_product(pid):
+        if current_user.role != 'seller':
+            flash('Access denied. Only sellers can delete products.', 'danger')
+            return redirect(url_for('home'))
+
+        product = Product.query.get_or_404(pid)
+        if product.seller_id != current_user.id:
+            flash('Unauthorized action.', 'danger')
+            return redirect(url_for('my_products'))
+
+        db.session.delete(product)
+        db.session.commit()
+        flash('Product deleted successfully!', 'success')
+        return redirect(url_for('my_products'))
+
     @app.route('/product/<int:pid>')
     def product_view(pid):
         product = Product.query.get_or_404(pid)
