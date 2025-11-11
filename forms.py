@@ -32,8 +32,8 @@ class OrderForm(FlaskForm):
     submit = SubmitField('Buy')
 
 class ProfileForm(FlaskForm):
-    display_name = StringField('Display Name', validators=[DataRequired()])
-    location = StringField('Location', validators=[DataRequired()])
-    background = StringField('Background Info')
-    profile_pic = FileField('Profile Picture', validators=[FileAllowed(['jpg', 'png', 'jpeg', 'gif'], 'Images only!')])
-    submit = SubmitField('Save Profile')
+    display_name = StringField('Display Name', validators=[DataRequired(), Length(min=2, max=80)])
+    location = StringField('Location', validators=[Length(max=200)])
+    profile_image = FileField('Profile Picture', validators=[FileAllowed(['jpg', 'jpeg', 'png', 'gif'])])
+    background_image = FileField('Background Image', validators=[FileAllowed(['jpg', 'jpeg', 'png', 'gif'])])
+    submit = SubmitField('Update Profile')
