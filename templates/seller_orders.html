@@ -9,12 +9,24 @@
       <div class="order-card">
         <div class="order-header">
           <strong>{{ o.product.name }}</strong>
-          <span class="status">{{ o.status }}</span>
+          <span class="status {{ o.status|lower }}">{{ o.status }}</span>
         </div>
-        <p>Buyer: {{ o.buyer.username }}</p>
+        <p>Buyer: <a href="{{ url_for('view_buyer_profile', user_id=o.buyer.id) }}">{{ o.buyer.username }}</a></p>
         <p>Quantity: {{ o.quantity }}</p>
         <p>Total: ₱{{ "%.2f"|format(o.total_price) }}</p>
+        <p>Delivery Address: {{ o.delivery_address }}</p>
         <small>Placed on: {{ o.created_at.strftime("%b %d, %Y") }}</small>
+
+        {% if o.status == 'Pending' %}
+          <div class="order-actions">
+            <form action="{{ url_for('approve_order', order_id=o.id) }}" method="POST" style="display:inline;">
+              <button type="submit" class="btn approve-btn">Approve ✅</button>
+            </form>
+            <form action="{{ url_for('reject_order', order_id=o.id) }}" method="POST" style="display:inline;">
+              <button type="submit" class="btn reject-btn">Reject ❌</button>
+            </form>
+          </div>
+        {% endif %}
       </div>
     {% endfor %}
   {% else %}
@@ -33,24 +45,56 @@
 
 .order-card {
   background: #fff;
-  padding: 15px;
-  margin-bottom: 10px;
+  padding: 20px;
+  margin-bottom: 15px;
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.order-card:hover {
+  transform: translateY(-3px);
 }
 
 .order-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 10px;
 }
 
 .status {
-  background: #c8e6c9;
   padding: 5px 10px;
   border-radius: 10px;
   font-weight: bold;
-  color: #2e7d32;
+  color: white;
+}
+
+.status.pending { background: #fbc02d; color: #fff; }
+.status.approved { background: #4caf50; color: #fff; }
+.status.rejected { background: #f44336; color: #fff; }
+
+.order-actions {
+  margin-top: 10px;
+}
+
+.btn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.approve-btn {
+  background-color: #4caf50;
+  color: #fff;
+  margin-right: 5px;
+}
+
+.reject-btn {
+  background-color: #f44336;
+  color: #fff;
 }
 </style>
 

@@ -1,15 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>My Profile</h2>
-
-<form method="POST" enctype="multipart/form-data" class="form-box">
-  {{ form.hidden_tag() }}
-
-  <div class="form-row">{{ form.display_name.label }} {{ form.display_name() }}</div>
-  <div class="form-row">{{ form.location.label }} {{ form.location() }}</div>
-  <div class="form-row">{{ form.profile_image.label }} {{ form.profile_image() }}</div>
-  <div class="form-row">{{ form.background_image.label }} {{ form.background_image() }}</div>
-
-  {{ form.submit(class_='btn') }}
-</form>
+<div class="profile-box">
+  <h2>My Profile</h2>
+  <img src="{{ user.profile_image }}" alt="Profile" class="profile-pic">
+  <form method="POST" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    <label>{{ form.display_name.label }}</label> {{ form.display_name() }}
+    <label>{{ form.location.label }}</label> {{ form.location() }}
+    <label>{{ form.delivery_address.label }}</label> {{ form.delivery_address() }}
+    <label>{{ form.profile_image.label }}</label> {{ form.profile_image() }}
+    <label>{{ form.background_image.label }}</label> {{ form.background_image() }}
+    {{ form.submit(class_='btn') }}
+  </form>
+</div>
 {% endblock %}

@@ -1,14 +1,96 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ title if title else 'AgriMarket PH' }}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      background-color: #1a4d2e;
+      padding: 10px 20px;
+      color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin-right: 15px;
+      padding: 5px 8px;
+      border-radius: 5px;
+      transition: background 0.2s;
+    }
+
+    nav a:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+
+    .header-brand a {
+      font-weight: bold;
+      font-size: 20px;
+      color: #fff;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+
+    ul.flashes {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 15px;
+    }
+
+    ul.flashes li {
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-bottom: 5px;
+      color: #fff;
+    }
+
+    li.success { background-color: #4caf50; }
+    li.danger { background-color: #f44336; }
+    li.warning { background-color: #ff9800; }
+    li.info { background-color: #2196f3; }
+
+    .footer {
+      background-color: #1a4d2e;
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      margin-top: 50px;
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      nav a {
+        margin: 5px 0;
+      }
+    }
+  </style>
 </head>
 <body>
   <nav>
     <div class="header-brand">
-      <a href="{{ url_for('home') }}" style="color:#fff;">AgriMarket PH</a>
+      <a href="{{ url_for('home') }}">AgriMarket PH</a>
     </div>
     <div style="flex:1"></div>
 
@@ -17,19 +99,19 @@
         <a href="{{ url_for('home') }}">Shop</a>
         <a href="{{ url_for('view_cart') }}">Cart</a>
         <a href="{{ url_for('order_history') }}">My Orders</a>
-
       {% elif current_user.role == 'seller' %}
         <a href="{{ url_for('add_product') }}">Add Product</a>
         <a href="{{ url_for('my_products') }}">My Products</a>
         <a href="{{ url_for('seller_orders') }}">Customer Orders</a>
       {% endif %}
 
-      <a href="{{ url_for('features') }}" style="margin-left: 15px; color: white; text-decoration: none;">Features</a>
-
+      <a href="{{ url_for('features') }}">Features</a>
       <a href="{{ url_for('profile') }}">Profile</a>
+      {% if current_user.profile_pic %}
+        <img src="{{ url_for('static', filename='uploads/' ~ current_user.profile_pic) }}" alt="Profile Pic" style="width:30px;height:30px;border-radius:50%;margin-left:8px;">
+      {% endif %}
       <span style="margin-left:8px;">Hello, {{ current_user.username }}</span>
       <a href="{{ url_for('logout') }}">Logout</a>
-
     {% else %}
       <a href="{{ url_for('login') }}">Login</a>
       <a href="{{ url_for('register') }}">Register</a>
@@ -39,17 +121,18 @@
   <div class="container">
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
-        <ul>
+        <ul class="flashes">
           {% for cat, msg in messages %}
-            <li class="small {{ cat }}">{{ msg }}</li>
+            <li class="{{ cat }}">{{ msg }}</li>
           {% endfor %}
         </ul>
       {% endif %}
     {% endwith %}
+
     {% block content %}{% endblock %}
   </div>
 
-  <div class="footer" style="background-color:#1a4d2e; color:white; text-align:center; padding:10px 0; margin-top:50px;">
+  <div class="footer">
     <p style="margin:0;">AgriMarket PH — Farmer to Buyer Marketplace</p>
   </div>
 </body>

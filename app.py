@@ -235,23 +235,35 @@ def create_app():
                 flash(f'Not enough stock for {item.product.name}', 'danger')
                 return redirect(url_for('view_cart'))
 
-        for item in items:
-            total_price = item.product.price * item.quantity
-            order = Order(
-                buyer_id=current_user.id,
-                product_id=item.product.id,
-                quantity=item.quantity,
-                total_price=total_price,
-                status='Pending'
-            )
-            item.product.quantity -= item.quantity
-            db.session.add(order)
-            db.session.delete(item)
+        try:
+            total_order_price = 0
+            for item in items:
+                total_price = item.product.price * item.quantity
+                total_order_price += total_price
 
-        db.session.commit()
-        flash('Checkout complete! Thank you for your order.', 'success')
-        return render_template('checkout_success.html')
+                order = Order(
+                    buyer_id=current_user.id,
+                    product_id=item.product.id,
+                    quantity=item.quantity,
+                    total_price=total_price,
+                    status='Pending',  
+                    delivery_address=current_user.address
+                )
 
+                item.product.quantity -= item.quantity
+
+                db.session.add(order)
+                db.session.delete(item)
+
+            db.session.commit()
+            flash(f'Checkout complete! Total: ₱{total_order_price}', 'success')
+            return render_template('checkout_success.html', total=total_order_price)
+
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred during checkout. Please try again.', 'danger')
+            print(e)
+            return redirect(url_for('view_cart'))
 
     @app.route('/seller/add-product', methods=['GET', 'POST'])
     @login_required
@@ -340,6 +352,28 @@ def create_app():
             .all()
         )
         return render_template('seller_orders.html', orders=orders)
+    
+    @app.route('/seller/order/update/<int:order_id>/<string:new_status>', methods=['POST'])
+    @login_required
+    def update_order_status(order_id, new_status):
+        if current_user.role != 'seller':
+            flash('Access denied.', 'danger')
+            return redirect(url_for('home'))
+
+        order = Order.query.get_or_404(order_id)
+        if order.product.seller_id != current_user.id:
+            flash('Unauthorized action.', 'danger')
+            return redirect(url_for('seller_orders'))
+
+        allowed = ['Pending', 'Approved', 'Shipped', 'Completed']
+        if new_status not in allowed:
+            flash('Invalid status.', 'danger')
+            return redirect(url_for('seller_orders'))
+
+        order.status = new_status
+        db.session.commit()
+        flash(f'Order marked as {new_status}.', 'success')
+        return redirect(url_for('seller_orders'))
 
     @app.route('/healthz')
     def health_check():

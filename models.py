@@ -17,6 +17,7 @@ class User(db.Model, UserMixin):
     background_image = db.Column(db.String(300), default='/static/default_bg.jpg')
     location = db.Column(db.String(200))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    delivery_address = db.Column(db.String(255))
 
     def is_admin(self):
         return self.role == 'admin'
@@ -51,6 +52,8 @@ class Order(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     buyer = db.relationship('User', backref=db.backref('orders', lazy=True))
     product = db.relationship('Product')
+    delivery_address = db.Column(db.String(255))
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 class CartItem(db.Model):
     __tablename__ = 'cart_items'

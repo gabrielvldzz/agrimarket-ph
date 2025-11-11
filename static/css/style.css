@@ -30,15 +30,21 @@ nav {
   top: 0;
   z-index: 1000;
   backdrop-filter: blur(5px);
+  flex-wrap: wrap;
 }
+
 nav a {
   color: #fff;
   text-decoration: none;
   margin-right: 8px;
-  transition: color 0.3s;
+  transition: color 0.3s, background 0.3s;
+  padding: 5px 8px;
+  border-radius: 5px;
 }
+
 nav a:hover {
   color: #a7e27a;
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 .container {
@@ -71,17 +77,20 @@ form, .card, .form-box {
   transform: translateY(-4px);
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
 }
+
 .card img {
   width: 100%;
   height: 160px;
   object-fit: cover;
   border-radius: 8px;
 }
+
 .card h3 {
   margin: 8px 0 4px;
   font-size: 16px;
   color: #13350f;
 }
+
 .price {
   font-weight: 700;
   color: #1b7a2b;
@@ -101,10 +110,12 @@ form, .card, .form-box {
   background: #1b7a2b;
   color: #fff;
   text-decoration: none;
-  transition: background 0.3s;
+  transition: background 0.3s, transform 0.2s;
+  cursor: pointer;
 }
 .btn:hover {
   background: #135c20;
+  transform: scale(1.05);
 }
 
 input[type=text], 
@@ -186,4 +197,36 @@ textarea {
 .small {
   font-size: 13px;
   color: #ddd;
+}
+
+ul.flashes {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 15px;
+}
+
+ul.flashes li {
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 5px;
+  color: #fff;
+  font-size: 14px;
+}
+
+li.success { background-color: #4caf50; }
+li.danger { background-color: #f44336; }
+li.warning { background-color: #ff9800; }
+li.info { background-color: #2196f3; }
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+  nav {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  nav a {
+    margin: 5px 0;
+  }
 }
