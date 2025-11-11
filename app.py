@@ -165,6 +165,7 @@ def create_app():
         ).order_by(Message.timestamp).all()
         return render_template('messages.html', messages=messages, other_user=other_user)
 
+
     @app.route('/cart')
     @login_required
     def view_cart():
@@ -290,6 +291,13 @@ def create_app():
 
         products = Product.query.filter_by(seller_id=current_user.id).all()
         return render_template('my_products.html', products=products)
+    
+    @app.route('/product/<int:pid>')
+    def product_view(pid):
+        product = Product.query.get_or_404(pid)
+        seller = User.query.get(product.seller_id)
+        return render_template('product_view.html', product=product, seller=seller)
+
 
     @app.route('/orders')
     @login_required

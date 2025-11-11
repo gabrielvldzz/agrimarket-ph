@@ -1,18 +1,60 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>{{ product.name }}</h2>
-<img src="{{ product.image_url() }}" style="max-width:360px; border-radius:8px;">
-<p class="small">{{ product.description }}</p>
-<p class="price">₱{{ '%.2f'|format(product.price) }}</p>
-<p>In stock: {{ product.quantity }}</p>
 
-{% if current_user.is_authenticated and not current_user.is_admin() %}
-  <form method="POST">
-    {{ form.hidden_tag() }}
-    {{ form.quantity.label }} {{ form.quantity(min=1, max=product.quantity) }}
-    {{ form.submit(class_='btn') }}
-  </form>
-{% else %}
-  <p class="small">Login as buyer to purchase.</p>
-{% endif %}
+<div class="product-view-container">
+  <div class="product-card">
+    <img src="{{ url_for('static', filename=product.image.split('static/')[-1]) if product.image else '/static/default_product.png' }}" 
+         alt="{{ product.name }}" class="product-img">
+
+    <div class="product-info">
+      <h2>{{ product.name }}</h2>
+      <p class="price">₱{{ "%.2f"|format(product.price) }}</p>
+      <p>{{ product.description }}</p>
+      <p><strong>Stock:</strong> {{ product.quantity }}</p>
+      <p><strong>Seller:</strong> {{ seller.username }}</p>
+      <p><strong>Location:</strong> {{ seller.location if seller.location else 'Not specified' }}</p>
+
+      {% if current_user.is_authenticated and current_user.role == 'buyer' %}
+        <form method="POST" action="{{ url_for('add_to_cart', product_id=product.id) }}">
+          <button type="submit" class="btn">Add to Cart</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+.product-view-container {
+  max-width: 900px;
+  margin: 40px auto;
+  background: #f9fff5;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.product-card {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+.product-img {
+  width: 350px;
+  height: 350px;
+  object-fit: cover;
+  border-radius: 15px;
+}
+
+.product-info {
+  flex: 1;
+}
+
+.price {
+  color: #2e7d32;
+  font-size: 1.6rem;
+  font-weight: bold;
+}
+</style>
+
 {% endblock %}
