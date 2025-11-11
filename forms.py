@@ -38,3 +38,6 @@ class ProfileForm(FlaskForm):
     profile_image = FileField('Profile Image')
     background_image = FileField('Background Image')
     submit = SubmitField('Save Changes')
+    address = StringField('Address', validators=[DataRequired()])  # 🆕
+    username = StringField('Username', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired()])

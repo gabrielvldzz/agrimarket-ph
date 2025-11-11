@@ -18,6 +18,7 @@ class User(db.Model, UserMixin):
     location = db.Column(db.String(200))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     delivery_address = db.Column(db.String(255))
+    address = db.Column(db.String(255))
 
     def is_admin(self):
         return self.role == 'admin'

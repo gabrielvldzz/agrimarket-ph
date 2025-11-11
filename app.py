@@ -122,8 +122,10 @@ def create_app():
         form = ProfileForm()
         if form.validate_on_submit():
             if form.display_name.data:
-                current_user.username = form.display_name.data
-            current_user.location = form.location.data
+                current_user.username = form.username.data
+                current_user.email = form.email.data
+                current_user.address = form.address.data
+                current_user.location = form.location.data
 
             if 'profile_image' in request.files:
                 f = request.files['profile_image']
@@ -225,6 +227,10 @@ def create_app():
             flash('Only buyers can checkout.', 'danger')
             return redirect(url_for('home'))
 
+        if not current_user.address:
+            flash('Please add a delivery address in your profile before checking out.', 'warning')
+            return redirect(url_for('profile'))
+
         items = CartItem.query.filter_by(user_id=current_user.id).all()
         if not items:
             flash('Your cart is empty.', 'warning')
@@ -235,35 +241,22 @@ def create_app():
                 flash(f'Not enough stock for {item.product.name}', 'danger')
                 return redirect(url_for('view_cart'))
 
-        try:
-            total_order_price = 0
-            for item in items:
-                total_price = item.product.price * item.quantity
-                total_order_price += total_price
+        for item in items:
+            total_price = item.product.price * item.quantity
+            order = Order(
+                buyer_id=current_user.id,
+                product_id=item.product.id,
+                quantity=item.quantity,
+                total_price=total_price,
+                status='Pending',
+            )
+            item.product.quantity -= item.quantity
+            db.session.add(order)
+            db.session.delete(item)
 
-                order = Order(
-                    buyer_id=current_user.id,
-                    product_id=item.product.id,
-                    quantity=item.quantity,
-                    total_price=total_price,
-                    status='Pending',  
-                    delivery_address=current_user.address
-                )
-
-                item.product.quantity -= item.quantity
-
-                db.session.add(order)
-                db.session.delete(item)
-
-            db.session.commit()
-            flash(f'Checkout complete! Total: ₱{total_order_price}', 'success')
-            return render_template('checkout_success.html', total=total_order_price)
-
-        except Exception as e:
-            db.session.rollback()
-            flash('An error occurred during checkout. Please try again.', 'danger')
-            print(e)
-            return redirect(url_for('view_cart'))
+        db.session.commit()
+        flash('Checkout complete! Thank you for your order.', 'success')
+        return render_template('checkout_success.html', address=current_user.address)
 
     @app.route('/seller/add-product', methods=['GET', 'POST'])
     @login_required
